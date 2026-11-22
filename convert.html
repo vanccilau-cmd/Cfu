@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新曆轉農曆 · 萬年曆換算 · 氣牆玄學法科</title>
+<meta name="description" content="輸入公曆（新曆）日子，即時換算農曆、生肖、干支、節氣，睇下嗰日係咪宜拜神嘅大日子。">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .tool-card{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:1.6rem 1.8rem;max-width:640px}
+  .con-row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:.3rem}
+  .field label{color:var(--gold-l);font-size:.8rem;letter-spacing:.12em}
+  .field select,.field input{
+    background:var(--ink);color:var(--text);border:1px solid var(--line);
+    padding:.55rem .7rem;border-radius:4px;font-family:inherit;font-size:1rem;
+  }
+  .field input[type=date]{width:200px}
+  .con-row .btn{padding:.6rem 1.6rem}
+  #out{margin-top:1.5rem;display:none}
+  #out .row{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 0;border-bottom:1px dashed var(--line)}
+  #out .row:last-child{border-bottom:none}
+  #out .k{color:var(--muted);font-size:.9rem}
+  #out .v{color:var(--paper);font-weight:600;text-align:right}
+  #out .v.acc{color:var(--gold-l)}
+  #out .v.fest{color:var(--cinnabar)}
+  .big-lunar{font-size:2rem;color:var(--gold-l);letter-spacing:.08em;margin-bottom:.4rem}
+  .fest-hit{margin-top:1.2rem;border:1px solid var(--gold);border-radius:6px;padding:.8rem 1.1rem;color:var(--muted)}
+  .fest-hit b{color:var(--gold-l)}
+  .hint{font-size:.82rem;color:var(--muted);margin-top:.5rem}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="seal">玄學<br>法科</div>
+      <div>
+        <div class="name">氣牆法科</div>
+        <div class="sub">崇法 · 護身 · 安宅</div>
+      </div>
+    </div>
+    <nav class="menu">
+      <a href="index.html">首頁</a>
+      <a href="services.html">法科服務</a>
+      <a href="qi-wall.html">氣牆知識</a>
+      <a href="festivals.html">節令記事</a>
+      <a href="convert.html" class="active">新曆轉農曆</a>
+      <a href="testimonials.html">案例見證</a>
+      <a href="contact.html">聯絡我</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="kicker">◈ 即時換算</p>
+  <h1 class="title">新曆轉農曆</h1>
+  <p class="lead">揀個公曆（新曆）日子,即刻睇返佢嘅農曆、生肖、干支,同埋嗰日係咪啱啱撞正大時節。問事、睇相、約期開壇都用得着。</p>
+
+  <div class="divider"></div>
+
+  <div class="tool-card">
+    <div class="con-row">
+      <div class="field">
+        <label>年份</label>
+        <select id="y"></select>
+      </div>
+      <div class="field">
+        <label>月份</label>
+        <select id="m"></select>
+      </div>
+      <div class="field">
+        <label>日期</label>
+        <select id="d"></select>
+      </div>
+      <button class="btn solid" id="go" type="button">換算</button>
+    </div>
+    <div class="hint">可直接打「今天」揀返今日日期。</div>
+  </div>
+
+  <div id="out"></div>
+
+  <div id="no-result" class="warning" style="display:none">呢個日子有啲問題,請重新揀過日期。</div>
+
+  <div class="note" style="margin-top:1.6rem;">
+    <strong>提提你：</strong>呢個係通用農曆萬年曆,適用 1901–2099 年。遇閏月、特殊節氣以實際曆法為準;想知確切開壇吉時,<a href="contact.html">約期問事</a>最穩陣。
+  </div>
+
+  <div class="cta-row" style="justify-content:flex-start;">
+    <a class="btn ghost" href="festivals.html">配返拜神時節表睇</a>
+    <a class="btn ghost" href="contact.html">約期問事</a>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-seal">氣牆玄學法科</div>
+  <div>崇法護身 · 問事預約 · 香港全區</div>
+  <div>© 2026 氣牆玄學法科　一切隨緣，善信自安</div>
+</footer>
+
+<script src="assets/js/lunar.js"></script>
+<script>
+(function(){
+  // --- 填年月日下拉 ---
+  var now=new Date();
+  var ySel=document.getElementById('y'), mSel=document.getElementById('m'), dSel=document.getElementById('d');
+  for(var yy=1901; yy<=2099; yy++){ var o=document.createElement('option'); o.value=yy; o.text=yy+'年'; ySel.appendChild(o);}
+  for(var mm=1; mm<=12; mm++){ var o2=document.createElement('option'); o2.value=mm; o2.text=mm+'月'; mSel.appendChild(o2);}
+  for(var dd=1; dd<=31; dd++){ var o3=document.createElement('option'); o3.value=dd; o3.text=dd+'日'; dSel.appendChild(o3);}
+  ySel.value=now.getFullYear(); mSel.value=now.getMonth()+1; dSel.value=now.getDate();
+  // 月份天數自適應
+  function daysIn(y,m){ return new Date(y, m, 0).getDate(); }
+  function fixDays(){
+    var mx=daysIn(+ySel.value, +mSel.value);
+    while(dSel.options.length>mx) dSel.remove(dSel.options.length-1);
+    for(var i=dSel.options.length+1;i<=mx;i++){ var o=document.createElement('option'); o.value=i; o.text=i+'日'; dSel.appendChild(o);}
+  }
+  ySel.addEventListener('change',fixDays);
+  mSel.addEventListener('change',fixDays);
+
+  // --- 大時節: 農曆月/日 -> 名稱 ---
+  var FEST_LUNAR={};
+  function addF(m,d,name){ FEST_LUNAR[m*100+d]=name; }
+  addF(1,1,'新春開年／正月初一'); addF(1,7,'人日'); addF(1,9,'天公誕'); addF(1,15,'元宵（上元）');
+  addF(2,2,'龍抬頭／土地誕'); addF(2,19,'觀音誕（誕辰）'); addF(3,3,'北帝誕'); addF(3,23,'天后誕');
+  addF(4,8,'佛誕'); addF(5,5,'端午'); addF(6,19,'觀音成道日'); addF(7,14,'盂蘭／中元');
+  addF(7,17,'黃大仙誕'); addF(8,15,'中秋'); addF(9,9,'重陽'); addF(9,19,'觀音出家日');
+  addF(12,16,'尾禡（還禡）'); addF(12,23,'謝灶／送灶君'); addF(12,24,'祀灶');
+
+  var CN=['零','一','二','三','四','五','六','七','八','九','十','十一','十二'];
+  function monthCN(m){ return (m<0?'閏':'')+CN[Math.abs(m)]; }
+  var UNITS=['一','二','三','四','五','六','七','八','九'];
+  function dayCN(d){
+    if(d===30) return '三十';
+    if(d===20) return '二十';
+    if(d===10) return '初十';
+    if(d<10)  return '初'+UNITS[d-1];
+    if(d<20)  return '十'+UNITS[d-11];   // 十一..十九
+    return '廿'+UNITS[d-21];             // 廿一..廿九
+  }
+
+  // --- 大時節:節氣表 (粗排24節氣;以日期相近計,用lunar庫精確節氣於 note CSS可忽略) ---
+  document.getElementById('go').addEventListener('click', function(){
+    var Y=+ySel.value, M=+mSel.value, D=+dSel.value;
+    var out=document.getElementById('out');
+    var nowarn=document.getElementById('no-result');
+    nowarn.style.display='none'; out.style.display='none';
+    try{
+      var solar=Solar.fromYmd(Y,M,D);
+      if(!solar) throw 0;
+      var lun=solar.getLunar();
+      var html='';
+      html+='<div class="row"><span class="k">新曆（公曆）</span><span class="v">'+Y+'年'+M+'月'+D+'日</span></div>';
+      html+='<div class="row"><span class="k">農曆</span><span class="v acc big-lunar">'+monthCN(lun.getMonth())+'・'+dayCN(lun.getDay())+'</span></div>';
+      html+='<div class="row"><span class="k">生肖</span><span class="v">'+lun.getYearShengXiao()+'</span></div>';
+      html+='<div class="row"><span class="k">干支（年）</span><span class="v">'+lun.getYearInGanZhi()+'</span></div>';
+      html+='<div class="row"><span class="k">干支（日）</span><span class="v">'+lun.getDayInGanZhi()+'</span></div>';
+      var jq=lun.getJieQi ? lun.getJieQi() : '';
+      html+='<div class="row"><span class="k">節氣</span><span class="v">'+(jq||'—')+'</span></div>';
+      // 星座 (公曆已知星座)
+      html+='<div class="row"><span class="k">星座</span><span class="v">'+zodiac(M,D)+'</span></div>';
+
+      // 撞正大時節?
+      var key=Math.abs(lun.getMonth())*100+lun.getDay();
+      var name=FEST_LUNAR[key];
+      html+='<div class="fest-hit">';
+      if(name){
+        html+='🔔 呢日撞正 <b>'+name+'</b> —— 傳統上係拜神／祈福嘅好日子,<a href="festivals.html">配返節令記事睇升運貼士</a>。';
+      }else{
+        html+='呢日唔係常用大時節;想知吉凶宜忌或配合補氣牆,<a href="contact.html">約期問事</a>最穩陣。';
+      }
+      html+='</div>';
+      out.innerHTML=html;
+      out.style.display='block';
+    }catch(e){
+      nowarn.style.display='block';
+    }
+  });
+
+  // 標準黃道十二宮（以公曆月＋臨界日計）
+  var ZODIAC=[
+    ['山羊座','水瓶座',20],  // 1 月
+    ['水瓶座','雙魚座',19],  // 2 月
+    ['雙魚座','白羊座',21],  // 3 月
+    ['白羊座','金牛座',20],  // 4 月
+    ['金牛座','雙子座',21],  // 5 月
+    ['雙子座','巨蟹座',21],  // 6 月
+    ['巨蟹座','獅子座',23],  // 7 月
+    ['獅子座','處女座',23],  // 8 月
+    ['處女座','天秤座',23],  // 9 月
+    ['天秤座','天蠍座',23],  // 10 月
+    ['天蠍座','人馬座',22],  // 11 月
+    ['人馬座','山羊座',22]   // 12 月
+  ];
+  function zodiac(M,D){
+    var z=ZODIAC[M-1];
+    return D>=z[2]? z[1] : z[0];
+  }
+})();
+</script>
+
+</body>
+</html>
